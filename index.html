@@ -1,34 +1,656 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1000 Palavras - 4 Idiomas</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1000 Palavras - 4 Idiomas</title>
+<style>
+    :root {
+        --bg: #f5f7fa;
+        --card: #ffffff;
+        --text: #202124;
+        --muted: #5f6368;
+        --border: #dadce0;
+        --accent: #1a73e8;
+        --accent-light: #e8f0fe;
+        --header: #17365d;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+    }
+
+    header {
+        background: var(--header);
+        color: white;
+        padding: 34px 20px 28px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        font-size: clamp(28px, 5vw, 42px);
+    }
+
+    header p {
+        margin: 0;
+        font-size: 17px;
+        opacity: .92;
+    }
+
+    .container {
+        width: min(1100px, calc(100% - 28px));
+        margin: 28px auto 50px;
+    }
+
+    .intro {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .intro h2 {
+        margin-top: 0;
+        color: var(--header);
+    }
+
+    .controls {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+    }
+
+    #search {
+        flex: 1 1 300px;
+        padding: 13px 15px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 16px;
+        outline: none;
+    }
+
+    #search:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-light);
+    }
+
+    .count {
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        background: var(--accent-light);
+        color: #174ea6;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+
+    .table-wrap {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow-x: auto;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+    }
+
+    th {
+        background: var(--header);
+        color: white;
+        padding: 14px 12px;
+        text-align: left;
+        position: sticky;
+        top: 0;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #e8eaed;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    tbody tr:hover {
+        background: #f8faff;
+    }
+
+    .num {
+        width: 55px;
+        color: var(--muted);
+        text-align: center;
+    }
+
+    .word {
+        font-weight: bold;
+    }
+
+    .similar {
+        background: #f1f8e9;
+    }
+
+    .group {
+        display: inline-block;
+        font-size: 12px;
+        padding: 3px 7px;
+        border-radius: 12px;
+        background: #eef0f2;
+        color: #444;
+        white-space: nowrap;
+    }
+
+    footer {
+        text-align: center;
+        color: var(--muted);
+        margin-top: 25px;
+        font-size: 14px;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 650px) {
+        header { padding: 26px 15px; }
+        .container { width: min(100% - 16px, 1100px); margin-top: 16px; }
+        .intro { padding: 16px; }
+    }
+</style>
 </head>
 
 <body>
 
+<header>
     <h1>1000 Palavras - 4 Idiomas</h1>
+    <p>Português • Italiano • Francês • Inglês</p>
+</header>
 
-    <h2>Português • Italiano • Francês • Inglês</h2>
+<main class="container">
 
-    <p>
-        Manual de 1000 palavras essenciais em português,
-        italiano, francês e inglês por similaridade.
-    </p>
+    <section class="intro">
+        <h2>50 primeiras palavras</h2>
+        <p>
+            Primeiro lote do projeto: palavras essenciais organizadas
+            inicialmente pelo grau de semelhança entre os quatro idiomas.
+            A ideia é facilitar a memorização através das palavras que
+            apresentam raízes ou formas semelhantes.
+        </p>
+    </section>
 
-    <hr>
+    <div class="controls">
+        <input
+            id="search"
+            type="search"
+            placeholder="Pesquisar em qualquer idioma..."
+            aria-label="Pesquisar palavras"
+        >
+        <div class="count" id="count">50 palavras</div>
+    </div>
 
-    <h2>Projeto em construção</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th class="num">Nº</th>
+                    <th>Português</th>
+                    <th>Italiano</th>
+                    <th>Francês</th>
+                    <th>Inglês</th>
+                    <th>Semelhança</th>
+                </tr>
+            </thead>
+            <tbody id="wordTable">
 
-    <p>
-        Esta é a primeira página de teste do projeto.
-    </p>
+                <tr>
+                    <td class="num">1</td>
+                    <td class="word">animal</td>
+                    <td class="word">animale</td>
+                    <td class="word">animal</td>
+                    <td class="word">animal</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">2</td>
+                    <td class="word">normal</td>
+                    <td class="word">normale</td>
+                    <td class="word">normal</td>
+                    <td class="word">normal</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">3</td>
+                    <td class="word">total</td>
+                    <td class="word">totale</td>
+                    <td class="word">total</td>
+                    <td class="word">total</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">4</td>
+                    <td class="word">final</td>
+                    <td class="word">finale</td>
+                    <td class="word">final</td>
+                    <td class="word">final</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">5</td>
+                    <td class="word">social</td>
+                    <td class="word">sociale</td>
+                    <td class="word">social</td>
+                    <td class="word">social</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">6</td>
+                    <td class="word">central</td>
+                    <td class="word">centrale</td>
+                    <td class="word">central</td>
+                    <td class="word">central</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">7</td>
+                    <td class="word">local</td>
+                    <td class="word">locale</td>
+                    <td class="word">local</td>
+                    <td class="word">local</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">8</td>
+                    <td class="word">musical</td>
+                    <td class="word">musicale</td>
+                    <td class="word">musical</td>
+                    <td class="word">musical</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">9</td>
+                    <td class="word">cultural</td>
+                    <td class="word">culturale</td>
+                    <td class="word">culturel</td>
+                    <td class="word">cultural</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">10</td>
+                    <td class="word">original</td>
+                    <td class="word">originale</td>
+                    <td class="word">original</td>
+                    <td class="word">original</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
 
-    <p>
-        Em breve teremos as 1000 palavras organizadas
-        por grau de similaridade entre os quatro idiomas.
-    </p>
+                <tr>
+                    <td class="num">11</td>
+                    <td class="word">importante</td>
+                    <td class="word">importante</td>
+                    <td class="word">important</td>
+                    <td class="word">important</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">12</td>
+                    <td class="word">diferente</td>
+                    <td class="word">differente</td>
+                    <td class="word">différent</td>
+                    <td class="word">different</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">13</td>
+                    <td class="word">possível</td>
+                    <td class="word">possibile</td>
+                    <td class="word">possible</td>
+                    <td class="word">possible</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">14</td>
+                    <td class="word">especial</td>
+                    <td class="word">speciale</td>
+                    <td class="word">spécial</td>
+                    <td class="word">special</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">15</td>
+                    <td class="word">principal</td>
+                    <td class="word">principale</td>
+                    <td class="word">principal</td>
+                    <td class="word">principal</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">16</td>
+                    <td class="word">nacional</td>
+                    <td class="word">nazionale</td>
+                    <td class="word">national</td>
+                    <td class="word">national</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">17</td>
+                    <td class="word">internacional</td>
+                    <td class="word">internazionale</td>
+                    <td class="word">international</td>
+                    <td class="word">international</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">18</td>
+                    <td class="word">pessoal</td>
+                    <td class="word">personale</td>
+                    <td class="word">personnel</td>
+                    <td class="word">personal</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">19</td>
+                    <td class="word">familiar</td>
+                    <td class="word">familiare</td>
+                    <td class="word">familial</td>
+                    <td class="word">familiar</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">20</td>
+                    <td class="word">general</td>
+                    <td class="word">generale</td>
+                    <td class="word">général</td>
+                    <td class="word">general</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+
+                <tr>
+                    <td class="num">21</td>
+                    <td class="word">hospital</td>
+                    <td class="word">ospedale</td>
+                    <td class="word">hôpital</td>
+                    <td class="word">hospital</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">22</td>
+                    <td class="word">problema</td>
+                    <td class="word">problema</td>
+                    <td class="word">problème</td>
+                    <td class="word">problem</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">23</td>
+                    <td class="word">momento</td>
+                    <td class="word">momento</td>
+                    <td class="word">moment</td>
+                    <td class="word">moment</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">24</td>
+                    <td class="word">telefone</td>
+                    <td class="word">telefono</td>
+                    <td class="word">téléphone</td>
+                    <td class="word">telephone</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">25</td>
+                    <td class="word">música</td>
+                    <td class="word">musica</td>
+                    <td class="word">musique</td>
+                    <td class="word">music</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">26</td>
+                    <td class="word">história</td>
+                    <td class="word">storia</td>
+                    <td class="word">histoire</td>
+                    <td class="word">history</td>
+                    <td><span class="group">Média</span></td>
+                </tr>
+                <tr>
+                    <td class="num">27</td>
+                    <td class="word">informação</td>
+                    <td class="word">informazione</td>
+                    <td class="word">information</td>
+                    <td class="word">information</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">28</td>
+                    <td class="word">situação</td>
+                    <td class="word">situazione</td>
+                    <td class="word">situation</td>
+                    <td class="word">situation</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">29</td>
+                    <td class="word">atenção</td>
+                    <td class="word">attenzione</td>
+                    <td class="word">attention</td>
+                    <td class="word">attention</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">30</td>
+                    <td class="word">direção</td>
+                    <td class="word">direzione</td>
+                    <td class="word">direction</td>
+                    <td class="word">direction</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+
+                <tr>
+                    <td class="num">31</td>
+                    <td class="word">decisão</td>
+                    <td class="word">decisione</td>
+                    <td class="word">décision</td>
+                    <td class="word">decision</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">32</td>
+                    <td class="word">organização</td>
+                    <td class="word">organizzazione</td>
+                    <td class="word">organisation</td>
+                    <td class="word">organization</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">33</td>
+                    <td class="word">comunicação</td>
+                    <td class="word">comunicazione</td>
+                    <td class="word">communication</td>
+                    <td class="word">communication</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">34</td>
+                    <td class="word">educação</td>
+                    <td class="word">educazione</td>
+                    <td class="word">éducation</td>
+                    <td class="word">education</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">35</td>
+                    <td class="word">televisão</td>
+                    <td class="word">televisione</td>
+                    <td class="word">télévision</td>
+                    <td class="word">television</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">36</td>
+                    <td class="word">universidade</td>
+                    <td class="word">università</td>
+                    <td class="word">université</td>
+                    <td class="word">university</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">37</td>
+                    <td class="word">restaurante</td>
+                    <td class="word">ristorante</td>
+                    <td class="word">restaurant</td>
+                    <td class="word">restaurant</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">38</td>
+                    <td class="word">minuto</td>
+                    <td class="word">minuto</td>
+                    <td class="word">minute</td>
+                    <td class="word">minute</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">39</td>
+                    <td class="word">documento</td>
+                    <td class="word">documento</td>
+                    <td class="word">document</td>
+                    <td class="word">document</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">40</td>
+                    <td class="word">exemplo</td>
+                    <td class="word">esempio</td>
+                    <td class="word">exemple</td>
+                    <td class="word">example</td>
+                    <td><span class="group">Média</span></td>
+                </tr>
+
+                <tr>
+                    <td class="num">41</td>
+                    <td class="word">número</td>
+                    <td class="word">numero</td>
+                    <td class="word">numéro</td>
+                    <td class="word">number</td>
+                    <td><span class="group">Média</span></td>
+                </tr>
+                <tr>
+                    <td class="num">42</td>
+                    <td class="word">ideia</td>
+                    <td class="word">idea</td>
+                    <td class="word">idée</td>
+                    <td class="word">idea</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">43</td>
+                    <td class="word">família</td>
+                    <td class="word">famiglia</td>
+                    <td class="word">famille</td>
+                    <td class="word">family</td>
+                    <td><span class="group">Média</span></td>
+                </tr>
+                <tr>
+                    <td class="num">44</td>
+                    <td class="word">política</td>
+                    <td class="word">politica</td>
+                    <td class="word">politique</td>
+                    <td class="word">politics</td>
+                    <td><span class="group">Média</span></td>
+                </tr>
+                <tr>
+                    <td class="num">45</td>
+                    <td class="word">energia</td>
+                    <td class="word">energia</td>
+                    <td class="word">énergie</td>
+                    <td class="word">energy</td>
+                    <td><span class="group">Média-alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">46</td>
+                    <td class="word">capital</td>
+                    <td class="word">capitale</td>
+                    <td class="word">capitale</td>
+                    <td class="word">capital</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">47</td>
+                    <td class="word">mercado</td>
+                    <td class="word">mercato</td>
+                    <td class="word">marché</td>
+                    <td class="word">market</td>
+                    <td><span class="group">Média</span></td>
+                </tr>
+                <tr>
+                    <td class="num">48</td>
+                    <td class="word">presidente</td>
+                    <td class="word">presidente</td>
+                    <td class="word">président</td>
+                    <td class="word">president</td>
+                    <td><span class="group">Muito alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">49</td>
+                    <td class="word">importação</td>
+                    <td class="word">importazione</td>
+                    <td class="word">importation</td>
+                    <td class="word">importation</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+                <tr>
+                    <td class="num">50</td>
+                    <td class="word">nacionalidade</td>
+                    <td class="word">nazionalità</td>
+                    <td class="word">nationalité</td>
+                    <td class="word">nationality</td>
+                    <td><span class="group">Alta</span></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        Projeto em construção — primeira etapa: 50 palavras.
+    </footer>
+</main>
+
+<script>
+const search = document.getElementById("search");
+const rows = [...document.querySelectorAll("#wordTable tr")];
+const count = document.getElementById("count");
+
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+search.addEventListener("input", function () {
+    const term = normalize(this.value.trim());
+    let visible = 0;
+
+    rows.forEach(row => {
+        const text = normalize(row.innerText);
+        const show = !term || text.includes(term);
+        row.classList.toggle("hidden", !show);
+        if (show) visible++;
+    });
+
+    count.textContent = visible + (visible === 1 ? " palavra" : " palavras");
+});
+</script>
 
 </body>
 </html>
